@@ -24,44 +24,47 @@ public class ClienteController {
     private ClienteService cliService;
 
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Regular cli){
+    public ResponseEntity<?> guardar(@RequestBody Regular cli) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cliService.save(cli));
     }
+
     @PostMapping("/vip")
-    public ResponseEntity<?> guardarVIP(@RequestBody VIP cli){
+    public ResponseEntity<?> guardarVIP(@RequestBody VIP cli) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cliService.saveVIP(cli));
     }
 
     @GetMapping
-    public ResponseEntity<?> traerTodos(){
+    public ResponseEntity<?> traerTodos() {
         return ResponseEntity.status(HttpStatus.OK).body(cliService.getAll());
     }
+
     @GetMapping("/vip")
-    public ResponseEntity<?> traerTodosVIP(){
+    public ResponseEntity<?> traerTodosVIP() {
         return ResponseEntity.status(HttpStatus.OK).body(cliService.getAllVIP());
     }
+
     @GetMapping("/regular")
-    public ResponseEntity<?> traerTodosRegular(){
+    public ResponseEntity<?> traerTodosRegular() {
         return ResponseEntity.status(HttpStatus.OK).body(cliService.getAllRegular());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> traerUno(@PathVariable int id){
+    public ResponseEntity<?> traerUno(@PathVariable int id) {
         return ResponseEntity.status(HttpStatus.FOUND).body(cliService.getAclient(id));
     }
 
     @PutMapping
-    public ResponseEntity<?> actualizar(@RequestBody Regular cli){
+    public ResponseEntity<?> actualizar(@RequestBody Regular cli) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cliService.update(cli));
     }
 
     @PutMapping("/vip")
-    public ResponseEntity<?> actualizar(@RequestBody VIP cli){
+    public ResponseEntity<?> actualizar(@RequestBody VIP cli) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cliService.updateVIP(cli));
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> eliminar(@RequestParam int id){
+    @DeleteMapping("/eliminarCliente")
+    public ResponseEntity<?> eliminar(@RequestParam int id) {
         return ResponseEntity.status(HttpStatus.OK).body(cliService.delete(id));
     }
 }
