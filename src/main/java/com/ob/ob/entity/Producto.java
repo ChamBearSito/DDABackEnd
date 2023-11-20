@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="producto")
+@Table(name = "producto")
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Producto {
     @Column(nullable = false)
     private int stock;
 
-    //region GETS AND SETS
+    // region GETS AND SETS
     public int getId() {
         return this.id;
     }
@@ -81,7 +81,7 @@ public class Producto {
     public void setStock(int stock) {
         this.stock = stock;
     }
-    //endregion GETS AND SETS
+    // endregion GETS AND SETS
 
     public Producto(int id, String nombre, String descripcion, int precio, boolean estado, int stock) {
         this.id = id;

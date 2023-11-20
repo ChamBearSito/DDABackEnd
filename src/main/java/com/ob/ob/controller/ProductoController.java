@@ -23,31 +23,32 @@ public class ProductoController {
     private ProductoService prodService;
 
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Producto prod){
+    public ResponseEntity<?> guardar(@RequestBody Producto prod) {
         return ResponseEntity.status(HttpStatus.CREATED).body(prodService.save(prod));
     }
 
     @GetMapping
-    public ResponseEntity<?> traerTodos(){
+    public ResponseEntity<?> traerTodos() {
         return ResponseEntity.status(HttpStatus.OK).body(prodService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> traerUno(@PathVariable int id){
+    public ResponseEntity<?> traerUno(@PathVariable int id) {
         return ResponseEntity.status(HttpStatus.FOUND).body(prodService.getAproduct(id));
     }
+
     @GetMapping("/cant")
-    public ResponseEntity<?> traerPorStock(@RequestParam int cant){
+    public ResponseEntity<?> traerPorStock(@RequestParam int cant) {
         return ResponseEntity.status(HttpStatus.FOUND).body(prodService.getProductsByStock(cant));
     }
 
     @PutMapping
-    public ResponseEntity<?> actualizar(@RequestBody Producto prod){
+    public ResponseEntity<?> actualizar(@RequestBody Producto prod) {
         return ResponseEntity.status(HttpStatus.CREATED).body(prodService.update(prod));
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> eliminar(@RequestParam int id){
+    @DeleteMapping("/eliminarProducto")
+    public ResponseEntity<?> eliminar(@RequestParam int id) {
         return ResponseEntity.status(HttpStatus.OK).body(prodService.delete(id));
     }
 }
