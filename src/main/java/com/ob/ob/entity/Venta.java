@@ -38,7 +38,7 @@ public class Venta {
         @Column(nullable = false)
         private int cantidad;
 
-        //region GETTERS Y SETTERS
+        // region GETTERS Y SETTERS
 
         public Producto getProducto() {
             return producto;
@@ -55,7 +55,7 @@ public class Venta {
         public void setCantidad(int cantidad) {
             this.cantidad = cantidad;
         }
-        //endregion
+        // endregion
 
         public ProductoVenta(Producto producto, int cantidad) {
             this.producto = producto;
@@ -69,6 +69,9 @@ public class Venta {
     @Column(nullable = false)
     private String fecha;
 
+    @Column(nullable = false)
+    private double total; // Nuevo campo
+
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cli;
@@ -80,6 +83,14 @@ public class Venta {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public double getTotal() {
+        return this.total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
     }
 
     public List<Venta.ProductoVenta> getLista() {
@@ -99,18 +110,19 @@ public class Venta {
     }
 
     public Cliente getCli() {
-    return this.cli;
+        return this.cli;
     }
 
     public void setCli(Cliente cli) {
-    this.cli = cli;
+        this.cli = cli;
     }
-    //endregion
+    // endregion
 
-    public Venta(List<Venta.ProductoVenta> lista, String fecha, Cliente cli) {
+    public Venta(List<Venta.ProductoVenta> lista, String fecha, Cliente cli, double total) {
         this.lista = lista;
         this.fecha = fecha;
         this.cli = cli;
+        this.total = total;
     }
 
     public Venta() {
