@@ -12,31 +12,31 @@ import com.ob.ob.repository.VentaRepository;
 import jakarta.transaction.Transactional;
 
 @Service
-public class VentaSevImpl implements VentaService{
+public class VentaSevImpl implements VentaService {
     @Autowired
     private VentaRepository ventaRepository;
 
     @Override
     @Transactional
-    public Venta save(Venta vent){
+    public Venta save(Venta vent) {
         return ventaRepository.save(vent);
     }
 
     @Override
     @Transactional
-    public List<Venta> getAll(){
+    public List<Venta> getAll() {
         return ventaRepository.findAll();
     }
 
     @Override
     @Transactional
-    public Optional<Venta> getAventa(int id){
+    public Optional<Venta> getAventa(int id) {
         return ventaRepository.findById(id);
     }
 
     @Override
     @Transactional
-    public String delete(int id){
+    public String delete(int id) {
         ventaRepository.deleteById(id);
         return "Se ha eliminado!";
     }

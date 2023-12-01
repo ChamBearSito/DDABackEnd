@@ -1,10 +1,12 @@
 package com.ob.ob.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,13 +39,18 @@ public class VentaController {
 
     @PostMapping
     public ResponseEntity<?> guardar(@RequestBody Venta venta) {
-        Venta trueVenta=devolverStock("agregar",venta);
+        Venta trueVenta = devolverStock("agregar", venta);
         return ResponseEntity.status(HttpStatus.CREATED).body(ventaService.save(trueVenta));
     }
 
     @GetMapping
     public ResponseEntity<?> traerTodos() {
         return ResponseEntity.status(HttpStatus.OK).body(ventaService.getAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> traer1(@PathVariable int id) {
+        return ResponseEntity.status(HttpStatus.OK).body(ventaService.getAventa(id));
     }
 
     @DeleteMapping
@@ -58,29 +65,30 @@ public class VentaController {
         return ResponseEntity.status(HttpStatus.OK).body(ventaService.delete(id));
     }
 
-    private Venta devolverStock(String action, Venta venta){
-        List<ProductoVenta> laLista=new ArrayList<>();
+    private Venta devolverStock(String action, Venta venta) {
+        List<ProductoVenta> laLista = new ArrayList<>();
         for (ProductoVenta prod : venta.getLista()) {
             Producto product = prod.getProducto();
-            product.setStock(action=="agregar"?product.getStock() - prod.getCantidad():product.getStock() + prod.getCantidad());
+            product.setStock(action == "agregar" ? product.getStock() - prod.getCantidad()
+                    : product.getStock() + prod.getCantidad());
             prodService.update(product);
-            if(action=="agregar"){
+            if (action == "agregar") {
                 prod.setProducto(product);
                 laLista.add(prod);
             }
         }
-        if(action=="agregar"){
+        if (action == "agregar") {
             venta.setLista(laLista);
         }
-        
+
         Cliente cli = venta.getCli();
 
         Optional<Regular> elCli = clientService.getAregular(cli.getId());
         Regular reg = elCli.orElse(null);
         if (reg != null) {
-            reg.setContadorCompras(action=="agregar"?reg.getContadorCompras() + 1:reg.getContadorCompras() - 1);
+            reg.setContadorCompras(action == "agregar" ? reg.getContadorCompras() + 1 : reg.getContadorCompras() - 1);
             clientService.update(reg);
-            if(action=="agregar"){
+            if (action == "agregar") {
                 venta.setCli(reg);
             }
         }
@@ -88,9 +96,9 @@ public class VentaController {
         Optional<VIP> theCLI = clientService.getAvip(cli.getId());
         VIP vip = theCLI.orElse(null);
         if (vip != null) {
-            vip.setContadorCompras(action=="agregar"?vip.getContadorCompras() + 1:vip.getContadorCompras() - 1);
+            vip.setContadorCompras(action == "agregar" ? vip.getContadorCompras() + 1 : vip.getContadorCompras() - 1);
             clientService.updateVIP(vip);
-            if(action=="agregar"){
+            if (action == "agregar") {
                 venta.setCli(vip);
             }
         }
