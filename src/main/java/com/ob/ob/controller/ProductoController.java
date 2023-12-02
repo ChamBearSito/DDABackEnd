@@ -34,12 +34,12 @@ public class ProductoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> traerUno(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.FOUND).body(prodService.getAproduct(id));
+        return ResponseEntity.status(HttpStatus.OK).body(prodService.getAproduct(id));
     }
 
     @GetMapping("/cant")
     public ResponseEntity<?> traerPorStock(@RequestParam int cant) {
-        return ResponseEntity.status(HttpStatus.FOUND).body(prodService.getProductsByStock(cant));
+        return ResponseEntity.status(HttpStatus.OK).body(prodService.getProductsByStock(cant));
     }
 
     @PutMapping

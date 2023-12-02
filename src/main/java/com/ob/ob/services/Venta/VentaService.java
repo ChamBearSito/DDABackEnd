@@ -13,5 +13,6 @@ public interface VentaService {
     public Optional<Venta> getAventa(int id);
 
     public String delete(int id);
-    // public Venta update(Venta venta);
+
+    public Venta update(Venta venta);
 }

@@ -24,6 +24,12 @@ public class VentaSevImpl implements VentaService {
 
     @Override
     @Transactional
+    public Venta update(Venta vent) {
+        return ventaRepository.save(vent);
+    }
+
+    @Override
+    @Transactional
     public List<Venta> getAll() {
         return ventaRepository.findAll();
     }

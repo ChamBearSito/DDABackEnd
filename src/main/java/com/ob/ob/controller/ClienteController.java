@@ -50,7 +50,7 @@ public class ClienteController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> traerUno(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.FOUND).body(cliService.getAclient(id));
+        return ResponseEntity.status(HttpStatus.OK).body(cliService.getAclient(id));
     }
 
     @PutMapping
