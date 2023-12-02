@@ -1,7 +1,6 @@
 package com.ob.ob.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,7 +55,14 @@ public class VentaController {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateVenta(@RequestBody Venta venta) {
-        return ResponseEntity.status(HttpStatus.OK).body(ventaService.save(venta));
+            Optional<Venta> ventaVieja = ventaService.getAventa(venta.getId());
+            Venta laVentaVieja=ventaVieja.orElse(null);
+            
+            devolverStock("eliminar", laVentaVieja);
+
+            Venta trueVenta=devolverStock("agregar", venta);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ventaService.update(trueVenta));
     }
 
     @DeleteMapping
@@ -73,8 +79,10 @@ public class VentaController {
 
     private Venta devolverStock(String action, Venta venta) {
         List<ProductoVenta> laLista = new ArrayList<>();
+        
         for (ProductoVenta prod : venta.getLista()) {
-            Producto product = prod.getProducto();
+            Optional<Producto> elProd= prodService.getAproduct(prod.getProducto().getId());
+            Producto product = elProd.orElse(null);
             product.setStock(action == "agregar" ? product.getStock() - prod.getCantidad()
                     : product.getStock() + prod.getCantidad());
             prodService.update(product);
