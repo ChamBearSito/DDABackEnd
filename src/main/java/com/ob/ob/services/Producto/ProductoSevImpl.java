@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.ob.ob.entity.Producto;
 import com.ob.ob.repository.ProductoRepository;
 import com.ob.ob.repository.VentaRepository;
+import com.ob.ob.utils.AppException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import jakarta.transaction.Transactional;
@@ -23,14 +25,27 @@ public class ProductoSevImpl implements ProductoService {
 
     @Override
     @Transactional
-    public Producto save(Producto prod) {
-        return productoRepository.save(prod);
+    public Producto save(Producto prod) throws AppException {
+        try {
+
+            return productoRepository.save(prod);
+        } catch (Exception e) {
+            throw new AppException("hubo un error al Ingresar el Producto");
+        }
     }
 
     @Override
     @Transactional
-    public Producto update(Producto prod) {
-        return productoRepository.save(prod);
+    public Producto update(Producto prod) throws AppException {
+        try {
+            if (productoRepository.existsById(prod.getId())) {
+                return productoRepository.save(prod);
+
+            } else
+                throw new AppException("Producto con ese Id no encontrado");
+        } catch (Exception e) {
+            throw new AppException("hubo un error al Encontrar el Producto");
+        }
     }
 
     public boolean existsByProductoId(@PathVariable int productoId) {
@@ -39,13 +54,18 @@ public class ProductoSevImpl implements ProductoService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> delete(int id) {
-        if (existsByProductoId(id)) {
-            return new ResponseEntity<>("Existen datos en ventas de este producto, no es posible eliminar",
-                    HttpStatus.METHOD_NOT_ALLOWED);
-        } else {
-            productoRepository.deleteById(id);
-            return new ResponseEntity<>("Se ha eliminado correctamente", HttpStatus.OK);
+    public ResponseEntity<String> delete(int id) throws AppException {
+        try {
+
+            if (existsByProductoId(id)) {
+                return new ResponseEntity<>("Existen datos en ventas de este producto, no es posible eliminar",
+                        HttpStatus.METHOD_NOT_ALLOWED);
+            } else {
+                productoRepository.deleteById(id);
+                return new ResponseEntity<>("Se ha eliminado correctamente", HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            throw new AppException("hubo un error al eliminar el Producto");
         }
     }
 
@@ -57,8 +77,16 @@ public class ProductoSevImpl implements ProductoService {
 
     @Override
     @Transactional
-    public Optional<Producto> getAproduct(int id) {
-        return productoRepository.findById(id);
+    public Optional<Producto> getAproduct(int id) throws AppException {
+        try {
+            if (productoRepository.existsById(id)) {
+
+                return productoRepository.findById(id);
+            } else
+                throw new AppException("Producto con ese Id no encontrado");
+        } catch (Exception e) {
+            throw new AppException("hubo un error al Encontrar el Producto");
+        }
     }
 
     @Override

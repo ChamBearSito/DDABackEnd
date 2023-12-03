@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.ob.ob.entity.Venta;
 import com.ob.ob.repository.VentaRepository;
+import com.ob.ob.utils.AppException;
 
 import jakarta.transaction.Transactional;
 
@@ -18,14 +19,30 @@ public class VentaSevImpl implements VentaService {
 
     @Override
     @Transactional
-    public Venta save(Venta vent) {
-        return ventaRepository.save(vent);
+    public Venta save(Venta vent) throws AppException {
+
+        try {
+            ventaRepository.save(vent);
+            return vent;
+        } catch (Exception e) {
+            throw new AppException("hubo un error al realizar la Venta");
+        }
     }
 
     @Override
     @Transactional
-    public Venta update(Venta vent) {
-        return ventaRepository.save(vent);
+    public Venta update(Venta vent) throws AppException {
+        try {
+            if (ventaRepository.existsById(vent.getId())) {
+                return ventaRepository.save(vent);
+
+            } else
+                throw new AppException("No existe Venta Con ese ID");
+
+        } catch (Exception e) {
+            throw new AppException("hubo un error al Modificar la Venta");
+        }
+
     }
 
     @Override
@@ -36,14 +53,33 @@ public class VentaSevImpl implements VentaService {
 
     @Override
     @Transactional
-    public Optional<Venta> getAventa(int id) {
-        return ventaRepository.findById(id);
+    public Optional<Venta> getAventa(int id) throws AppException {
+        try {
+            if (ventaRepository.existsById(id)) {
+
+                return ventaRepository.findById(id);
+            } else
+                throw new AppException("No existe Venta Con ese ID");
+
+        } catch (Exception e) {
+            throw new AppException("hubo un error al realizar la Venta");
+        }
+
     }
 
     @Override
     @Transactional
-    public String delete(int id) {
-        ventaRepository.deleteById(id);
-        return "Se ha eliminado!";
+    public String delete(int id) throws AppException {
+        try {
+            if (ventaRepository.existsById(id)) {
+
+                ventaRepository.deleteById(id);
+                return "Se ha eliminado!";
+            } else {
+                return "Venta con ese Id no fue encontrada";
+            }
+        } catch (Exception e) {
+            throw new AppException("hubo un error al eliminar la Venta");
+        }
     }
 }

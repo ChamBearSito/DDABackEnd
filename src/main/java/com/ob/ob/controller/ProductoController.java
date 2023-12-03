@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ob.ob.entity.Producto;
 import com.ob.ob.services.Producto.ProductoService;
+import com.ob.ob.utils.AppException;
 
 @RestController
 @RequestMapping("/products")
@@ -23,8 +24,17 @@ public class ProductoController {
     private ProductoService prodService;
 
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Producto prod) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(prodService.save(prod));
+    public ResponseEntity<?> guardar(@RequestBody Producto prod) throws AppException {
+
+        try {
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(prodService.save(prod));
+        } catch (AppException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del sistema.");
+        }
     }
 
     @GetMapping
@@ -33,8 +43,16 @@ public class ProductoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> traerUno(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(prodService.getAproduct(id));
+    public ResponseEntity<?> traerUno(@PathVariable int id) throws AppException {
+        try {
+
+            return ResponseEntity.status(HttpStatus.OK).body(prodService.getAproduct(id));
+        } catch (AppException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del sistema.");
+        }
     }
 
     @GetMapping("/cant")
@@ -43,12 +61,30 @@ public class ProductoController {
     }
 
     @PutMapping
-    public ResponseEntity<?> actualizar(@RequestBody Producto prod) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(prodService.update(prod));
+    public ResponseEntity<?> actualizar(@RequestBody Producto prod) throws AppException {
+
+        try {
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(prodService.update(prod));
+        } catch (AppException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del sistema.");
+        }
     }
 
     @DeleteMapping("/eliminarProducto")
-    public ResponseEntity<?> eliminar(@RequestParam int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(prodService.delete(id));
+    public ResponseEntity<?> eliminar(@RequestParam int id) throws AppException {
+
+        try {
+
+            return ResponseEntity.status(HttpStatus.OK).body(prodService.delete(id));
+        } catch (AppException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del sistema.");
+        }
     }
 }

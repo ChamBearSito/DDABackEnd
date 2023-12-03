@@ -22,6 +22,7 @@ import com.ob.ob.entity.Venta.ProductoVenta;
 import com.ob.ob.services.Cliente.ClienteService;
 import com.ob.ob.services.Producto.ProductoService;
 import com.ob.ob.services.Venta.VentaService;
+import com.ob.ob.utils.AppException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +40,17 @@ public class VentaController {
 
     @PostMapping
     public ResponseEntity<?> guardar(@RequestBody Venta venta) {
-        Venta trueVenta = devolverStock("agregar", venta);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ventaService.save(trueVenta));
+
+        try {
+
+            Venta trueVenta = devolverStock("agregar", venta);
+            return ResponseEntity.status(HttpStatus.CREATED).body(ventaService.save(trueVenta));
+        } catch (AppException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del sistema.");
+        }
     }
 
     @GetMapping
@@ -50,38 +60,65 @@ public class VentaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> traer1(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(ventaService.getAventa(id));
+        try {
+
+            return ResponseEntity.status(HttpStatus.OK).body(ventaService.getAventa(id));
+        } catch (AppException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del sistema.");
+        }
+
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateVenta(@RequestBody Venta venta) {
+    public ResponseEntity<?> updateVenta(@RequestBody Venta venta) throws AppException {
+
+        try {
+
             Optional<Venta> ventaVieja = ventaService.getAventa(venta.getId());
-            Venta laVentaVieja=ventaVieja.orElse(null);
-            
+            Venta laVentaVieja = ventaVieja.orElse(null);
+
             devolverStock("eliminar", laVentaVieja);
 
-            Venta trueVenta=devolverStock("agregar", venta);
+            Venta trueVenta = devolverStock("agregar", venta);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ventaService.update(trueVenta));
+            return ResponseEntity.status(HttpStatus.OK).body(ventaService.update(trueVenta));
+        } catch (AppException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del sistema.");
+        }
     }
 
     @DeleteMapping
-    public ResponseEntity<?> eliminar(@RequestParam int id) {
-        Optional<Venta> laVenta = ventaService.getAventa(id);
-        Venta venta = laVenta.orElse(null);
+    public ResponseEntity<?> eliminar(@RequestParam int id) throws AppException {
+        try {
 
-        if (laVenta != null) {
-            devolverStock("eliminar", venta);
+            Optional<Venta> laVenta = ventaService.getAventa(id);
+            Venta venta = laVenta.orElse(null);
+
+            if (laVenta != null) {
+                devolverStock("eliminar", venta);
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(ventaService.delete(id));
+        } catch (AppException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del sistema.");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(ventaService.delete(id));
     }
 
-    private Venta devolverStock(String action, Venta venta) {
+    private Venta devolverStock(String action, Venta venta) throws AppException {
         List<ProductoVenta> laLista = new ArrayList<>();
-        
+
         for (ProductoVenta prod : venta.getLista()) {
-            Optional<Producto> elProd= prodService.getAproduct(prod.getProducto().getId());
+            Optional<Producto> elProd = prodService.getAproduct(prod.getProducto().getId());
             Producto product = elProd.orElse(null);
             product.setStock(action == "agregar" ? product.getStock() - prod.getCantidad()
                     : product.getStock() + prod.getCantidad());
@@ -101,7 +138,12 @@ public class VentaController {
         Regular reg = elCli.orElse(null);
         if (reg != null) {
             reg.setContadorCompras(action == "agregar" ? reg.getContadorCompras() + 1 : reg.getContadorCompras() - 1);
-            clientService.update(reg);
+            try {
+                clientService.update(reg);
+            } catch (AppException e) {
+                // Manejar la excepción o propagarla según sea necesario
+                throw new AppException("Error al actualizar el cliente regular");
+            }
             if (action == "agregar") {
                 venta.setCli(reg);
             }
