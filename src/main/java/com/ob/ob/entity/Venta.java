@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -21,7 +22,9 @@ public class Venta {
     private int id;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "producto_venta_id")
+    @JoinTable(name="venta_lista",
+    joinColumns = @JoinColumn(name="id_venta"),
+    inverseJoinColumns= @JoinColumn(name="id_producto_venta"))
     private List<Venta.ProductoVenta> lista;
 
     @Entity
@@ -32,7 +35,7 @@ public class Venta {
         private int id;
 
         @ManyToOne
-        @JoinColumn(name = "producto_id")
+        @JoinColumn(name = "producto_id", referencedColumnName = "id")
         private Producto producto;
 
         @Column(nullable = false)
